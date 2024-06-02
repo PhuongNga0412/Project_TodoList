@@ -11,7 +11,7 @@ const UserList = () => {
     const [pageCount, setPageCount] = useState(1);
     const [showForm, setShowForm] = useState(false);
     const [search, setSearch] = useState("");
-    const userToken = localStorage.getItem("userToken");
+    // const userToken = localStorage.getItem("userToken");
 
     const dispatch = useDispatch();
     const { userList, totalPages } = useSelector(getUserState);
@@ -23,7 +23,6 @@ const UserList = () => {
             })
         );
     }, []);
-    console.log(userList);
 
     const handlePageClick = async (data) => {
         let currentPage = data.selected + 1;
@@ -50,12 +49,21 @@ const UserList = () => {
         setSearch(event.target.value);
     };
     const handleFilterByDepartment = () => {
+        // let currentPage = data.selected + 1;
+        // setPageCount(currentPage);
         dispatch(
             getAllUsersThunk({
                 _page: 1,
                 department: search,
             })
         );
+        console.log(userList);
+        // dispatch(
+        //     getAllUsersThunk({
+        //         _page: 1,
+        //         department: search,
+        //     })
+        // );
     };
 
     // if (!userToken) {
@@ -256,7 +264,7 @@ const UserList = () => {
                         previousLinkClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         nextLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         breakLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                        activeLinkClassName="flex items-center justify-center px-3 h-8 text-sky-700 border-gray-300 bg-sky-100"
+                        activeLinkClassName="flex items-center justify-center px-3 h-8 text-sky-700 font-semibold border-gray-300 bg-sky-200"
                     />
                 </div>
             </div>

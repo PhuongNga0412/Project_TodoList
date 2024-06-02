@@ -6,13 +6,9 @@ const instance = axios.create({
 });
 
 const fetchAllUser = (params) => {
-    console.log(params);
     return instance.get(`/users`, {
         params,
     });
-};
-const fetchUser = () => {
-    return instance.get("/users");
 };
 
 const postCreateUser = (user) => {
@@ -28,4 +24,8 @@ const deleteUser = (id) => {
     return instance.delete("/users/" + id);
 };
 
-export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser, fetchUser };
+const loginAPI = () => {
+    return instance.get("/users");
+};
+
+export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser, loginAPI };

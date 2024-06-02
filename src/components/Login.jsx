@@ -1,19 +1,9 @@
 import logo from "assets/images/logo.png";
 import { useState, useEffect } from "react";
-import { Await, Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllUsersThunk, getUserState } from "reducers/userReducer";
-import { fetchUser } from "./services/UserService";
-
-const user = {
-    username: "pnga",
-    password: "123",
-};
+import { Link, useNavigate } from "react-router-dom";
+import { loginAPI } from "./services/UserService";
 
 const Login = () => {
-    const dispatch = useDispatch();
-    const { userList } = useSelector(getUserState);
-
     useEffect(() => {
         const userToken = localStorage.getItem("userToken");
         if (!userToken) {
@@ -44,29 +34,31 @@ const Login = () => {
         if (userLogin.password.trim().length === 0) {
             msgError.password = "password is required";
         } else {
-            // if (
-            //     userLogin.username.trim() !== user.username ||
-            //     userLogin.password.trim() !== user.password
-            // ) {
-            //     msgError.invalidAccount = "incorrect user name or password";
-            // } else {
-            let res = await fetchUser;
+            let users = await loginAPI();
+            console.log("check >>>", users.data);
 
-            console.log(res);
+            const result = users.data.find(
+                ({ username, password }) =>
+                    username === userLogin.username &&
+                    password === userLogin.password
+            );
+            console.log(result);
+            if (result) {
+                alert("dang nhap thanh cong");
+                navigate("/");
+                const jsonUser = JSON.stringify(result);
+                localStorage.setItem("user", jsonUser);
+            } else {
+                msgError.invalidAccount = "incorrect user name or password";
+            }
 
-            // localStorage.setItem(
-            //     "userToken",
-            //     "4G02zBeVAt2GMF5aV0P77PeDxoIGKpQhquQkohHcVfQPbVvPkisHs2qAkyq1lcq6"
-            // );
             setUserLogin({
                 ...userLogin,
                 username: "",
                 password: "",
             });
-            // navigate("/");
-            // }
         }
-        // console.log(msgError);
+
         setMessage({
             ...message,
             username: msgError.username,

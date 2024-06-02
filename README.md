@@ -1,44 +1,62 @@
 Các chức năng của final project:
 
-Login
+-   Login(done)
+-   Logout(done)
+-   User List
+-   Create new user
+-   Update user
+-   Delete user
+-   Paging
+-   Sorting
+-   Filter
 
-Logout
+    User:
 
-User List
+    -   ID : string
+    -   First name : string
+    -   Last name : string
+    -   Address : string
+    -   Age : number
+    -   Department : string
 
-Create new user
+1. Login page
 
-Update user
+-   validate form:
 
-Delete user
+    -   bắt nhập đầy đủ thông tin, thiếu 1 trong 2 field thì hiện message thông báo (done)
+    -   nếu account không đúng => hiện message thông báo(done)
+    -   check thông tin username và password, nếu thông tin trùng với account mà ta có => set token vào local storage, redirect đến home page(done)
+    -   nếu login thành công => đổi text từ login qua logout (done)
+    -   nếu user đổi url trên trình duyệt sang /login => redirect về trang home(done)
 
-Paging
+    {key : userToken, value : "4G02zBeVAt2GMF5aV0P77PeDxoIGKpQhquQkohHcVfQPbVvPkisHs2qAkyq1lcq6"}
 
-Sorting
+2. User List
 
-Filter
+-   gọi api get ra list user(axios)
+-   hiển thị list user lên giao diện
 
-User:
+3. xóa user
 
-ID : string
-First name : string
-Last name : string
-Address : string
-Age : number
-Department : string
-scss
-js
-axios
-react bootstrap, bootstrap
-jsx
-style module scss
-axios
-redux, react redux, redux toolkit, redux dev tools
-create react app
-react bootstrap, bootstrap / antd design, tailwincss / MUI
-react router
-Formik, yup, pure process
-local storage
-json-server
-npm, yarn, nvm
-cách dùng các đơn vị phổ biến trong css
+-   click button delete => hiển thị popover để hỏi user có chắc chắn
+    muốn xóa không
+
+    -   bấm ok => xóa
+    -   cancel => ko xóa
+
+-   scss
+-   js
+-   axios
+-   react bootstrap, bootstrap
+-   jsx
+-   style module scss
+-   axios
+-   redux, react redux, redux toolkit, redux dev tools
+-   create react app
+-   react bootstrap, bootstrap / antd design, tailwincss / MUI
+-   react router
+-   Formik, yup, pure process
+-   local storage
+-   json-server
+-   npm, yarn, nvm
+-   cách dùng các đơn vị phổ biến trong css

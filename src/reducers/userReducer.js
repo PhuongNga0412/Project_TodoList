@@ -26,6 +26,7 @@ export const userSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getAllUsersThunk.fulfilled, (state, action) => {
             state.userList = action.payload.data;
+            console.log(state.userList);
             state.totalPages = action.payload.pages;
         });
     },
