@@ -1,13 +1,8 @@
-import { deleteUser } from "./services/UserService";
-import { useDispatch } from "react-redux";
-import { getAllUsersThunk } from "reducers/userReducer";
-const ConfirmDelete = ({ onClose }) => {
-    const dispatch = useDispatch();
-    const handleDelete = async (id) => {
-        await deleteUser(id);
-
-        dispatch(getAllUsersThunk());
+const ConfirmDelete = ({ onClose, confirmDelete }) => {
+    const handleConfirm = () => {
+        confirmDelete();
     };
+
     return (
         <div>
             <div
@@ -60,7 +55,7 @@ const ConfirmDelete = ({ onClose }) => {
                                 Are you sure you want to delete this product?
                             </h3>
                             <button
-                                onClick={handleDelete}
+                                onClick={handleConfirm}
                                 data-modal-hide="popup-modal"
                                 type="button"
                                 className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"

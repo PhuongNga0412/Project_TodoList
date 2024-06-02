@@ -2,6 +2,7 @@ import logo from "assets/images/logo.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginAPI } from "./services/UserService";
+import { toast } from "react-toastify";
 
 const Login = () => {
     useEffect(() => {
@@ -29,10 +30,10 @@ const Login = () => {
 
     const handleLogin = async () => {
         if (userLogin.username.trim().length === 0) {
-            msgError.username = "username is required";
+            msgError.username = "Username is required";
         }
         if (userLogin.password.trim().length === 0) {
-            msgError.password = "password is required";
+            msgError.password = "Password is required";
         } else {
             let users = await loginAPI();
             console.log("check >>>", users.data);
@@ -44,12 +45,12 @@ const Login = () => {
             );
             console.log(result);
             if (result) {
-                alert("dang nhap thanh cong");
+                toast.info("Logged in successfully");
                 navigate("/");
                 const jsonUser = JSON.stringify(result);
                 localStorage.setItem("user", jsonUser);
             } else {
-                msgError.invalidAccount = "incorrect user name or password";
+                msgError.invalidAccount = "Incorrect user name or password";
             }
 
             setUserLogin({
@@ -68,8 +69,8 @@ const Login = () => {
     };
 
     return (
-        <section className="bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <section className="min-h-screen bg-gray-50 dark:bg-gray-900">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0">
                 <Link to="/" className="mb-6">
                     <img className="h-12 mr-2" src={logo} alt="logo" />
                 </Link>
@@ -78,7 +79,7 @@ const Login = () => {
                         <h1 className="text-center text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                             Sign in to your account
                         </h1>
-                        <p className="italic text-red-600 text-sm ">
+                        <p className="italic text-center text-red-500 text-xs ">
                             {message.invalidAccount}
                         </p>
                         <form className="space-y-4 md:space-y-6">
@@ -105,7 +106,7 @@ const Login = () => {
                                         setMessage("");
                                     }}
                                 />
-                                <p className="italic text-red-600 text-sm absolute">
+                                <p className="italic text-red-500 text-xs absolute">
                                     {message.username}
                                 </p>
                             </div>
@@ -133,7 +134,7 @@ const Login = () => {
                                         setMessage("");
                                     }}
                                 />
-                                <p className="italic text-red-600 text-sm absolute">
+                                <p className="italic text-red-500 text-xs absolute">
                                     {message.password}
                                 </p>
                             </div>

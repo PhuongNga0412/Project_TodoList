@@ -32,19 +32,39 @@ const UserList = () => {
         dispatch(
             getAllUsersThunk({
                 _page: currentPage,
+                department: search,
             })
         );
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
+        // window.scrollTo({
+        //     top: 0,
+        //     behavior: "smooth",
+        // });
     };
     const onClose = () => {
         setShowForm(false);
     };
 
-    const confirmDel = (id) => {
+    const [userIdToDelete, setUserIdToDelete] = useState(null);
+
+    const handleDeleteClick = (id) => {
+        setUserIdToDelete(id);
         setShowForm(true);
+    };
+
+    const closeModal = () => {
+        setShowForm(false);
+        setUserIdToDelete(null);
+    };
+
+    const confirmDelete = async (id) => {
+        await deleteUser(id);
+        dispatch(
+            getAllUsersThunk({
+                _page: 1,
+            })
+        );
+        setPageCount(1);
+        closeModal();
     };
 
     const handleDepartmentChange = (event) => {
@@ -57,7 +77,6 @@ const UserList = () => {
                 department: search,
             })
         );
-        console.log(userList);
     };
     // const token = localStorage.getItem("user");
     // if (!token) {
@@ -241,7 +260,7 @@ const UserList = () => {
                                             </Link>
                                             <button
                                                 onClick={() =>
-                                                    confirmDel(item.id)
+                                                    handleDeleteClick(item.id)
                                                 }
                                                 className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                             >
@@ -263,17 +282,21 @@ const UserList = () => {
                         pageRangeDisplayed={3}
                         currentPage={pageCount}
                         onPageChange={handlePageClick}
+                        activeClassName="text-sky-700"
                         containerClassName="inline-flex -space-x-px text-sm"
                         pageLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         previousLinkClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         nextLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         breakLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                        activeLinkClassName="flex items-center justify-center px-3 h-8 text-sky-700 font-semibold border-gray-300 bg-sky-200"
+                        activeLinkClassName="flex items-center justify-center px-3 h-8 text-sky-700 font-semibold border-gray-300 bg-sky-100"
                     />
                 </div>
             </div>
             {showForm && (
-                <ConfirmDelete onClose={onClose} confirmDel={confirmDel} />
+                <ConfirmDelete
+                    onClose={onClose}
+                    confirmDelete={() => confirmDelete(userIdToDelete)}
+                />
             )}
         </div>
     );

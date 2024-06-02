@@ -1,6 +1,8 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
+// import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
@@ -13,11 +15,14 @@ import ViewDetail from "components/ViewDetail.jsx";
 import { Provider } from "react-redux";
 import store from "./stores/index.js";
 import EditUser from "components/EditUser.jsx";
+import PageNotFound from "components/PageNotFound.jsx";
+import Test from "components/Test.jsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
         element: <LayoutRoot />,
+        errorElement: <h1>Error Page</h1>,
         children: [
             {
                 path: "user",
@@ -60,6 +65,14 @@ const router = createBrowserRouter([
     {
         path: "login",
         element: <Login />,
+    },
+    {
+        path: "*",
+        element: <PageNotFound />,
+    },
+    {
+        path: "test",
+        element: <Test />,
     },
 ]);
 

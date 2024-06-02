@@ -1,22 +1,27 @@
 import { useEffect, useState } from "react";
 import { postCreateUser, putUpdateUser } from "components/services/UserService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const FormUser = ({ isUpdate, userData }) => {
+    const navigate = useNavigate();
+
     const [user, setUser] = useState({
         firstName: "",
         lastName: "",
         address: "",
         birthday: "",
         department: "",
+        img: "",
     });
     const [message, setMessage] = useState("");
 
     const createUser = async () => {
         try {
             await postCreateUser(user);
-            alert("Them moi thanh cong");
+            toast.success("New user added successfully");
         } catch (error) {
-            alert("Them moi that bai");
+            toast.warning("Add new user failed");
         }
     };
 
@@ -24,9 +29,10 @@ const FormUser = ({ isUpdate, userData }) => {
         try {
             await putUpdateUser(user.id, user);
             console.log(user);
-            alert("Update thanh cong");
+            toast.success("User updated successfullyy");
+            navigate("/user");
         } catch (error) {
-            alert("Update that bai");
+            toast.warning("User update failed");
         }
     };
 
@@ -73,12 +79,32 @@ const FormUser = ({ isUpdate, userData }) => {
             // });
         }
     };
-
+    console.log(user);
     useEffect(() => {
         if (isUpdate && userData) {
             setUser(userData);
         }
     }, [isUpdate, userData]);
+
+    const handleChangeImage = async (event) => {
+        const file = event.target.files[0];
+        const base64 = await convertBase64(file);
+        console.log(base64);
+        setUser({ ...user, img: base64 });
+    };
+
+    const convertBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            };
+            fileReader.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
 
     return (
         <div>
@@ -135,6 +161,27 @@ const FormUser = ({ isUpdate, userData }) => {
                         />
                     </div>
                 </div>
+
+                <div>
+                    <div>
+                        <label
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            htmlFor="user_avatar"
+                        >
+                            Upload file
+                        </label>
+                        <input
+                            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                            aria-describedby="user_avatar_help"
+                            id="user_avatar"
+                            type="file"
+                            onChange={(event) => {
+                                handleChangeImage(event);
+                            }}
+                        />
+                    </div>
+                </div>
+
                 <div className="flex flex-wrap -mx-3 mb-6">
                     <div className="w-full px-3">
                         <label
