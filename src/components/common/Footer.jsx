@@ -9,12 +9,12 @@ const Footer = () => {
     const [token, setToken] = useState();
 
     useEffect(() => {
-        const userToken = localStorage.getItem("userToken");
+        const userToken = localStorage.getItem("user");
         setToken(userToken);
     }, []);
 
     const handleLogOut = () => {
-        localStorage.removeItem("userToken");
+        localStorage.removeItem("user");
         navigate("/login");
     };
 

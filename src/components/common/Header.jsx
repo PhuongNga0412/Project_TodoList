@@ -12,7 +12,7 @@ const Header = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const userToken = localStorage.getItem("userToken");
+        const userToken = localStorage.getItem("user");
         setToken(userToken);
     }, []);
 
@@ -21,7 +21,7 @@ const Header = () => {
     };
 
     const handleLogOut = () => {
-        localStorage.removeItem("userToken");
+        localStorage.removeItem("user");
         navigate("/login");
     };
 

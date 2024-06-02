@@ -11,7 +11,9 @@ const UserList = () => {
     const [pageCount, setPageCount] = useState(1);
     const [showForm, setShowForm] = useState(false);
     const [search, setSearch] = useState("");
-    // const userToken = localStorage.getItem("userToken");
+
+    const userToken = JSON.parse(localStorage.getItem("user"));
+    const admin = userToken.role === "admin";
 
     const dispatch = useDispatch();
     const { userList, totalPages } = useSelector(getUserState);
@@ -37,20 +39,18 @@ const UserList = () => {
             behavior: "smooth",
         });
     };
+    const onClose = () => {
+        setShowForm(false);
+    };
 
-    const handleDelete = async (id) => {
+    const confirmDel = (id) => {
         setShowForm(true);
-        await deleteUser(id);
-
-        dispatch(getAllUsersThunk());
     };
 
     const handleDepartmentChange = (event) => {
         setSearch(event.target.value);
     };
     const handleFilterByDepartment = () => {
-        // let currentPage = data.selected + 1;
-        // setPageCount(currentPage);
         dispatch(
             getAllUsersThunk({
                 _page: 1,
@@ -58,15 +58,9 @@ const UserList = () => {
             })
         );
         console.log(userList);
-        // dispatch(
-        //     getAllUsersThunk({
-        //         _page: 1,
-        //         department: search,
-        //     })
-        // );
     };
-
-    // if (!userToken) {
+    // const token = localStorage.getItem("user");
+    // if (!token) {
     //     return <h1>dang nhap</h1>;
     // }
 
@@ -106,13 +100,16 @@ const UserList = () => {
                         Search
                     </button>
                 </div>
-                <button
-                    onClick={() => navigate("/user/create")}
-                    className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    type="button"
-                >
-                    Create
-                </button>
+
+                {admin && (
+                    <button
+                        onClick={() => navigate("/user/create")}
+                        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        type="button"
+                    >
+                        Create
+                    </button>
+                )}
             </div>
 
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -186,9 +183,14 @@ const UserList = () => {
                                     </a>
                                 </div>
                             </th>
-                            <th scope="col" className="px-6 py-3 text-center">
-                                Action
-                            </th>
+                            {admin && (
+                                <th
+                                    scope="col"
+                                    className="px-6 py-3 text-center"
+                                >
+                                    Action
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody>
@@ -229,22 +231,24 @@ const UserList = () => {
                                     <td className="px-6 py-4">
                                         {item.department}
                                     </td>
-                                    <td className="px-6 py-4 text-center flex">
-                                        <Link
-                                            to={`/user/${item.id}`}
-                                            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
-                                        >
-                                            Edit
-                                        </Link>
-                                        <button
-                                            onClick={() =>
-                                                handleDelete(item.id)
-                                            }
-                                            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
+                                    {admin && (
+                                        <td className="px-6 py-4 text-center flex">
+                                            <Link
+                                                to={`/user/${item.id}`}
+                                                className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900"
+                                            >
+                                                Edit
+                                            </Link>
+                                            <button
+                                                onClick={() =>
+                                                    confirmDel(item.id)
+                                                }
+                                                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    )}
                                 </tr>
                             );
                         })}
@@ -268,7 +272,9 @@ const UserList = () => {
                     />
                 </div>
             </div>
-            {showForm && <ConfirmDelete handleDelete={handleDelete} />}
+            {showForm && (
+                <ConfirmDelete onClose={onClose} confirmDel={confirmDel} />
+            )}
         </div>
     );
 };

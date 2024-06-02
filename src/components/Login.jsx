@@ -5,7 +5,7 @@ import { loginAPI } from "./services/UserService";
 
 const Login = () => {
     useEffect(() => {
-        const userToken = localStorage.getItem("userToken");
+        const userToken = localStorage.getItem("user");
         if (!userToken) {
             navigate("/login");
         } else {
