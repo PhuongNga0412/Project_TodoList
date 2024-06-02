@@ -1,0 +1,25 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@font-face {
+    font-family: poppinsRegular;
+    src: url(assets/fonts/Poppins-Regular.ttf) format("truetype");
+    font-weight: 400;
+}
+@font-face {
+    font-family: poppinsMedium;
+    src: url(assets/fonts/Poppins-Medium.ttf) format("truetype");
+    font-weight: 500;
+}
+
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+    background-color: var(--c-white-2);
+    font-family: poppinsMedium, Arial, Helvetica, sans-serif;
+}
