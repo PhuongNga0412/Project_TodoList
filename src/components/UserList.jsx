@@ -11,6 +11,7 @@ const UserList = () => {
     const [pageCount, setPageCount] = useState(1);
     const [showForm, setShowForm] = useState(false);
     const [search, setSearch] = useState("");
+    const [sortLastName, setSortLastName] = useState("");
 
     const userToken = JSON.parse(localStorage.getItem("user"));
     const admin = userToken.role === "admin";
@@ -26,24 +27,25 @@ const UserList = () => {
         );
     }, []);
 
+    // ----- Paginate -----
     const handlePageClick = async (data) => {
         let currentPage = data.selected + 1;
         setPageCount(currentPage);
+
         dispatch(
             getAllUsersThunk({
                 _page: currentPage,
                 department: search,
+                _sort: sortLastName,
             })
         );
-        // window.scrollTo({
-        //     top: 0,
-        //     behavior: "smooth",
-        // });
-    };
-    const onClose = () => {
-        setShowForm(false);
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
     };
 
+    // ----- Delete User -----
     const [userIdToDelete, setUserIdToDelete] = useState(null);
 
     const handleDeleteClick = (id) => {
@@ -56,8 +58,8 @@ const UserList = () => {
         setUserIdToDelete(null);
     };
 
-    const confirmDelete = async (id) => {
-        await deleteUser(id);
+    const confirmDelete = async () => {
+        await deleteUser(userIdToDelete);
         dispatch(
             getAllUsersThunk({
                 _page: 1,
@@ -67,9 +69,11 @@ const UserList = () => {
         closeModal();
     };
 
+    // ----- Filter the list by Department -----
     const handleDepartmentChange = (event) => {
         setSearch(event.target.value);
     };
+
     const handleFilterByDepartment = () => {
         dispatch(
             getAllUsersThunk({
@@ -78,10 +82,18 @@ const UserList = () => {
             })
         );
     };
-    // const token = localStorage.getItem("user");
-    // if (!token) {
-    //     return <h1>dang nhap</h1>;
-    // }
+
+    // ----- Sort by Last Name -----
+    const handleSortLastName = () => {
+        dispatch(
+            getAllUsersThunk({
+                _page: 1,
+                department: search,
+                _sort: "lastName",
+            })
+        );
+        setSortLastName("lastName");
+    };
 
     return (
         <div className="container mx-auto my-11">
@@ -141,7 +153,7 @@ const UserList = () => {
                             <th scope="col" className="px-6 py-3">
                                 <div className="flex items-center">
                                     Last Name
-                                    <a href="#">
+                                    <button onClick={handleSortLastName}>
                                         <svg
                                             className="w-3 h-3 ms-1.5"
                                             aria-hidden="true"
@@ -151,55 +163,20 @@ const UserList = () => {
                                         >
                                             <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
                                         </svg>
-                                    </a>
+                                    </button>
                                 </div>
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                <div className="flex items-center">
-                                    Address
-                                    <a href="#">
-                                        <svg
-                                            className="w-3 h-3 ms-1.5"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
-                                </div>
+                                <div className="flex items-center">Address</div>
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 <div className="flex items-center">
                                     Birthday
-                                    <a href="#">
-                                        <svg
-                                            className="w-3 h-3 ms-1.5"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
                                 </div>
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 <div className="flex items-center">
                                     Department
-                                    <a href="#">
-                                        <svg
-                                            className="w-3 h-3 ms-1.5"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z" />
-                                        </svg>
-                                    </a>
                                 </div>
                             </th>
                             {admin && (
@@ -213,15 +190,6 @@ const UserList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* {userList
-                            ?.filter((item) => {
-                                return search.toLowerCase() === ""
-                                    ? item
-                                    : item.firstName
-                                          .toLowerCase()
-                                          .includes(search);
-                            })
-                            ?.map((item, index) => { */}
                         {userList?.map((item) => {
                             return (
                                 <tr
@@ -282,19 +250,19 @@ const UserList = () => {
                         pageRangeDisplayed={3}
                         currentPage={pageCount}
                         onPageChange={handlePageClick}
-                        activeClassName="text-sky-700"
+                        // activeClassName="text-sky-700"
                         containerClassName="inline-flex -space-x-px text-sm"
                         pageLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         previousLinkClassName="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         nextLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                         breakLinkClassName="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                        activeLinkClassName="flex items-center justify-center px-3 h-8 text-sky-700 font-semibold border-gray-300 bg-sky-100"
+                        activeLinkClassName="flex items-center justify-center px-3 h-8 text-sky-700 font-semibold border-gray-300 bg-blue-100"
                     />
                 </div>
             </div>
             {showForm && (
                 <ConfirmDelete
-                    onClose={onClose}
+                    onClose={closeModal}
                     confirmDelete={() => confirmDelete(userIdToDelete)}
                 />
             )}

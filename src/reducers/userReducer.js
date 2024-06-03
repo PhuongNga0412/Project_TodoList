@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchAllUser } from "components/services/UserService";
 
 const initialState = {
+    status: "idle",
     userList: [],
     totalPages: 0,
 };
@@ -23,10 +24,17 @@ export const userSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getAllUsersThunk.fulfilled, (state, action) => {
-            state.userList = action.payload.data;
-            state.totalPages = action.payload.pages;
-        });
+        builder
+            .addCase(getAllUsersThunk.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(getAllUsersThunk.fulfilled, (state, action) => {
+                state.userList = action.payload.data;
+                state.totalPages = action.payload.pages;
+            })
+            .addCase(getAllUsersThunk.rejected, (state) => {
+                state.status = "rejected";
+            });
     },
 });
 

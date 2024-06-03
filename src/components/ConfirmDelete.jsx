@@ -8,7 +8,7 @@ const ConfirmDelete = ({ onClose, confirmDelete }) => {
             <div
                 id="popup-modal"
                 tabIndex="-1"
-                className="z-1 flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+                className="bg-primary-bg-rgba flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full"
             >
                 <div className="relative p-4 w-full max-w-md max-h-full">
                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -52,7 +52,7 @@ const ConfirmDelete = ({ onClose, confirmDelete }) => {
                                 />
                             </svg>
                             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-                                Are you sure you want to delete this product?
+                                Are you sure you want to delete this user?
                             </h3>
                             <button
                                 onClick={handleConfirm}

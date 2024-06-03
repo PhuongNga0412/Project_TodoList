@@ -20,6 +20,14 @@ const FormUser = ({ isUpdate, userData }) => {
         try {
             await postCreateUser(user);
             toast.success("New user added successfully");
+            setUser({
+                ...user,
+                firstName: "",
+                lastName: "",
+                address: "",
+                birthday: "",
+                department: "",
+            });
         } catch (error) {
             toast.warning("Add new user failed");
         }
@@ -29,7 +37,15 @@ const FormUser = ({ isUpdate, userData }) => {
         try {
             await putUpdateUser(user.id, user);
             console.log(user);
-            toast.success("User updated successfullyy");
+            toast.success("User updated successfully");
+            setUser({
+                ...user,
+                firstName: "",
+                lastName: "",
+                address: "",
+                birthday: "",
+                department: "",
+            });
             navigate("/user");
         } catch (error) {
             toast.warning("User update failed");
@@ -52,34 +68,8 @@ const FormUser = ({ isUpdate, userData }) => {
             } else {
                 createUser();
             }
-            // axios
-            //     .post("localhost:3000/users", user)
-            //     .then((res) => {
-            //         console.log("res: ", res);
-            //     })
-            // .catch((err) => console.log(err));
-            // let res = await postCreateUser(user);
-            // postCreateUser(user)
-            //     .then((res) => {
-            //         console.log("res", res);
-            //     })
-            //     .catch((err) => console.log(err));
-            // console.log("res", res);
-            // console.log("res.id: ", res.id);
-            // if(res&&res.id)
-
-            // console.log("user", user);
-            // setUser({
-            //     ...user,
-            //     firstName: "",
-            //     lastName: "",
-            //     address: "",
-            //     birthday: "",
-            //     department: "",
-            // });
         }
     };
-    console.log(user);
     useEffect(() => {
         if (isUpdate && userData) {
             setUser(userData);
@@ -115,7 +105,7 @@ const FormUser = ({ isUpdate, userData }) => {
                 <p className="italic text-red-600 text-center mb-3 ">
                     {message}
                 </p>
-                <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="flex flex-wrap -mx-3 mb-4">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -162,27 +152,7 @@ const FormUser = ({ isUpdate, userData }) => {
                     </div>
                 </div>
 
-                <div>
-                    <div>
-                        <label
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            htmlFor="user_avatar"
-                        >
-                            Upload file
-                        </label>
-                        <input
-                            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
-                            aria-describedby="user_avatar_help"
-                            id="user_avatar"
-                            type="file"
-                            onChange={(event) => {
-                                handleChangeImage(event);
-                            }}
-                        />
-                    </div>
-                </div>
-
-                <div className="flex flex-wrap -mx-3 mb-6">
+                <div className="flex flex-wrap -mx-3 mb-4">
                     <div className="w-full px-3">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -206,7 +176,7 @@ const FormUser = ({ isUpdate, userData }) => {
                         />
                     </div>
                 </div>
-                <div className="flex flex-wrap -mx-3 mb-2">
+                <div className="flex flex-wrap -mx-3 mb-4">
                     <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -248,6 +218,9 @@ const FormUser = ({ isUpdate, userData }) => {
                                     setMessage("");
                                 }}
                             >
+                                <option value="" disabled selected hidden>
+                                    Select Department
+                                </option>
                                 <option value="VTI Group">VTI Group</option>
                                 <option value="FPT Software">
                                     FPT Software
@@ -267,13 +240,41 @@ const FormUser = ({ isUpdate, userData }) => {
                         </div>
                     </div>
                 </div>
+                <div>
+                    <div>
+                        <label
+                            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                            htmlFor="user_avatar"
+                        >
+                            Upload file
+                        </label>
+                        <input
+                            className="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-4 rounded border border-gray-300 file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-100 hover:file:text-gray-700"
+                            aria-describedby="user_avatar_help"
+                            id="user_avatar"
+                            type="file"
+                            onChange={(event) => {
+                                handleChangeImage(event);
+                            }}
+                        />
+                    </div>
+                </div>
 
-                <button
-                    className="block mx-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                    type="submit"
-                >
-                    {isUpdate ? "Update" : "Create"}
-                </button>
+                <div className="flex justify-center gap-3">
+                    <button
+                        onClick={() => navigate("/user")}
+                        className="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                        type="submit"
+                    >
+                        {isUpdate ? "Update" : "Create"}
+                    </button>
+                </div>
             </form>
         </div>
     );
