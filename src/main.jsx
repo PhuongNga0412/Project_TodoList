@@ -10,13 +10,11 @@ import LayoutRoot from "components/common/LayoutRoot.jsx";
 import Login from "components/Login.jsx";
 import UserList from "components/UserList.jsx";
 import CreateUser from "components/CreateUser.jsx";
-// import EditUser from "components/EditUser.jsx";
 import ViewDetail from "components/ViewDetail.jsx";
 import { Provider } from "react-redux";
 import store from "./stores/index.js";
 import EditUser from "components/EditUser.jsx";
 import PageNotFound from "components/PageNotFound.jsx";
-import Test from "components/Test.jsx";
 
 const router = createBrowserRouter([
     {
@@ -69,10 +67,6 @@ const router = createBrowserRouter([
     {
         path: "*",
         element: <PageNotFound />,
-    },
-    {
-        path: "test",
-        element: <Test />,
     },
 ]);
 
