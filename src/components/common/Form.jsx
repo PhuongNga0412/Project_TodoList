@@ -6,6 +6,16 @@ import { useNavigate } from "react-router-dom";
 const FormUser = ({ isUpdate, userData }) => {
     const navigate = useNavigate();
 
+    const maxDate = () => {
+        let dtToday = new Date();
+        let month = dtToday.getMonth() + 1;
+        let day = dtToday.getDate();
+        let year = dtToday.getFullYear();
+        if (month < 10) month = "0" + month.toString();
+        if (day < 10) day = "0" + day.toString();
+        return year + "-" + month + "-" + day;
+    };
+
     const [user, setUser] = useState({
         firstName: "",
         lastName: "",
@@ -14,7 +24,21 @@ const FormUser = ({ isUpdate, userData }) => {
         department: "",
         img: "",
     });
-    const [message, setMessage] = useState("");
+
+    const [message, setMessage] = useState({
+        firstName: "",
+        lastName: "",
+        address: "",
+        birthday: "",
+        department: "",
+    });
+    const msgError = {
+        firstName: "",
+        lastName: "",
+        address: "",
+        birthday: "",
+        department: "",
+    };
 
     const createUser = async () => {
         try {
@@ -54,22 +78,46 @@ const FormUser = ({ isUpdate, userData }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (user?.firstName.trim().length === 0) {
+            msgError.firstName = "First Name is required";
+        }
+        if (user?.lastName.trim().length === 0) {
+            msgError.lastName = "Last Name is required";
+        }
+        if (user?.address.trim().length === 0) {
+            msgError.address = "Address is required";
+        }
+        if (user?.birthday.trim().length === 0) {
+            msgError.birthday = "Birthday is required";
+        }
+        if (user?.department.trim().length === 0) {
+            msgError.department = "Department is required";
+        }
+        setMessage({
+            ...message,
+            firstName: msgError.firstName,
+            lastName: msgError.lastName,
+            address: msgError.address,
+            birthday: msgError.birthday,
+            department: msgError.department,
+        });
+
         if (
-            user?.firstName?.trim().length == 0 ||
-            user?.lastName?.trim().length == 0 ||
-            user?.address?.trim().length == 0 ||
-            user?.birthday?.trim().length == 0 ||
-            user?.department?.trim().length == 0
+            !!user?.firstName?.trim() &&
+            !!user?.lastName?.trim() &&
+            !!user?.address?.trim() &&
+            !!user?.birthday?.trim() &&
+            !!user?.department?.trim()
         ) {
-            setMessage("Please full fill data");
-        } else {
             if (isUpdate) {
                 updateUser();
             } else {
+                console.log(user);
                 createUser();
             }
         }
     };
+
     useEffect(() => {
         if (isUpdate && userData) {
             setUser(userData);
@@ -79,7 +127,6 @@ const FormUser = ({ isUpdate, userData }) => {
     const handleChangeImage = async (event) => {
         const file = event.target.files[0];
         const base64 = await convertBase64(file);
-        console.log(base64);
         setUser({ ...user, img: base64 });
     };
 
@@ -102,11 +149,8 @@ const FormUser = ({ isUpdate, userData }) => {
                 onSubmit={handleSubmit}
                 className="container bg-white w-full max-w-lg mx-auto rounded-lg shadow p-6"
             >
-                <p className="italic text-red-600 text-center mb-3 ">
-                    {message}
-                </p>
-                <div className="flex flex-wrap -mx-3 mb-4">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                <div className="flex flex-wrap -mx-3 mb-6">
+                    <div className="relative w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                             htmlFor="grid-first-name"
@@ -114,7 +158,7 @@ const FormUser = ({ isUpdate, userData }) => {
                             First Name
                         </label>
                         <input
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            className=" appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                             id="grid-first-name"
                             type="text"
                             placeholder="First Name"
@@ -124,11 +168,14 @@ const FormUser = ({ isUpdate, userData }) => {
                                     ...user,
                                     firstName: event.target.value,
                                 });
-                                setMessage("");
+                                setMessage({ ...message, firstName: "" });
                             }}
                         />
+                        <p className="italic text-red-500 text-xs absolute -bottom-5">
+                            {message.firstName}
+                        </p>
                     </div>
-                    <div className="w-full md:w-1/2 px-3">
+                    <div className="relative w-full md:w-1/2 px-3">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                             htmlFor="grid-last-name"
@@ -146,14 +193,17 @@ const FormUser = ({ isUpdate, userData }) => {
                                     ...user,
                                     lastName: event.target.value,
                                 });
-                                setMessage("");
+                                setMessage({ ...message, lastName: "" });
                             }}
                         />
+                        <p className="italic text-red-500 text-xs absolute -bottom-5">
+                            {message.lastName}
+                        </p>
                     </div>
                 </div>
 
-                <div className="flex flex-wrap -mx-3 mb-4">
-                    <div className="w-full px-3">
+                <div className="flex flex-wrap -mx-3 mb-6">
+                    <div className="relative w-full px-3">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                             htmlFor="grid-password"
@@ -161,7 +211,7 @@ const FormUser = ({ isUpdate, userData }) => {
                             Address
                         </label>
                         <input
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                             id="grid-password"
                             type="text"
                             placeholder="Please enter address"
@@ -171,13 +221,16 @@ const FormUser = ({ isUpdate, userData }) => {
                                     ...user,
                                     address: event.target.value,
                                 });
-                                setMessage("");
+                                setMessage({ ...message, address: "" });
                             }}
                         />
+                        <p className="italic text-red-500 text-xs absolute -bottom-5">
+                            {message.address}
+                        </p>
                     </div>
                 </div>
-                <div className="flex flex-wrap -mx-3 mb-4">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                <div className="flex flex-wrap -mx-3 mb-6">
+                    <div className="relative w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                             htmlFor="grid-city"
@@ -188,17 +241,21 @@ const FormUser = ({ isUpdate, userData }) => {
                             className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                             id="grid-city"
                             type="date"
+                            max={maxDate()}
                             value={user?.birthday}
                             onChange={(event) => {
                                 setUser({
                                     ...user,
                                     birthday: event.target.value,
                                 });
-                                setMessage("");
+                                setMessage({ ...message, birthday: "" });
                             }}
                         />
+                        <p className="italic text-red-500 text-xs absolute -bottom-5">
+                            {message.birthday}
+                        </p>
                     </div>
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                    <div className="relative w-full md:w-1/2 px-3 mb-6 md:mb-0">
                         <label
                             className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                             htmlFor="grid-state"
@@ -215,7 +272,7 @@ const FormUser = ({ isUpdate, userData }) => {
                                         ...user,
                                         department: event.target.value,
                                     });
-                                    setMessage("");
+                                    setMessage({ ...message, department: "" });
                                 }}
                             >
                                 <option value="" disabled selected hidden>
@@ -238,6 +295,9 @@ const FormUser = ({ isUpdate, userData }) => {
                                 </svg>
                             </div>
                         </div>
+                        <p className="italic text-red-500 text-xs absolute -bottom-5">
+                            {message.department}
+                        </p>
                     </div>
                 </div>
                 <div>

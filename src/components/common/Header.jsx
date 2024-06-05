@@ -3,6 +3,7 @@ import imgLogo from "assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getAllUsersThunk } from "reducers/userReducer";
+// import { toggleDarkMode } from "reducers/darkModeReducer";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -10,7 +11,8 @@ const Header = () => {
     const [search, setSearch] = useState("");
     const [token, setToken] = useState();
     const dispatch = useDispatch();
-
+    // const { darkMode } = useSelector((store) => store.darkMode);
+    // console.log(darkMode);
     useEffect(() => {
         const userToken = localStorage.getItem("user");
         setToken(userToken);
@@ -44,6 +46,10 @@ const Header = () => {
             );
         }
     };
+
+    // const darkModeClick = () => {
+    //     dispatch(toggleDarkMode());
+    // };
 
     return (
         <nav className="container mx-auto bg-white border-gray-200 dark:bg-gray-900">
@@ -81,6 +87,7 @@ const Header = () => {
                         </svg>
                         <span className="sr-only">Search</span>
                     </button>
+                    {/* <button onClick={darkModeClick}>dark</button> */}
 
                     <div className="relative hidden md:block">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

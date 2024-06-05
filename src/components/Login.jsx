@@ -106,11 +106,11 @@ const Login = () => {
                                         setMessage("");
                                     }}
                                 />
-                                <p className="italic text-red-500 text-xs absolute">
+                                <p className="italic text-red-500 text-xs absolute -bottom-5">
                                     {message.username}
                                 </p>
                             </div>
-                            <div className="relative">
+                            <div className="relative mb-6">
                                 <label
                                     htmlFor="password"
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -134,7 +134,7 @@ const Login = () => {
                                         setMessage("");
                                     }}
                                 />
-                                <p className="italic text-red-500 text-xs absolute">
+                                <p className="italic text-red-500 text-xs absolute -bottom-5">
                                     {message.password}
                                 </p>
                             </div>

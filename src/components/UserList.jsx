@@ -12,6 +12,8 @@ const UserList = () => {
     const [showForm, setShowForm] = useState(false);
     const [search, setSearch] = useState("");
     const [sortLastName, setSortLastName] = useState("");
+    const [selectedItemIds, setSelectedItemIds] = useState([]);
+    const [perPage, setPerPage] = useState(10);
 
     const userToken = JSON.parse(localStorage.getItem("user"));
     const admin = userToken.role === "admin";
@@ -27,6 +29,22 @@ const UserList = () => {
         );
     }, []);
 
+    const fetchData = (
+        _page = 1,
+        _per_page = perPage,
+        department = search,
+        _sort = null
+    ) => {
+        dispatch(
+            getAllUsersThunk({
+                _page,
+                _per_page,
+                department,
+                _sort,
+            })
+        );
+    };
+
     // ----- Paginate -----
     const handlePageClick = async (data) => {
         let currentPage = data.selected + 1;
@@ -35,6 +53,7 @@ const UserList = () => {
         dispatch(
             getAllUsersThunk({
                 _page: currentPage,
+                _per_page: perPage,
                 department: search,
                 _sort: sortLastName,
             })
@@ -75,24 +94,57 @@ const UserList = () => {
     };
 
     const handleFilterByDepartment = () => {
-        dispatch(
-            getAllUsersThunk({
-                _page: 1,
-                department: search,
-            })
-        );
+        fetchData(1, perPage, search, sortLastName);
     };
+    console.log(handleFilterByDepartment);
 
     // ----- Sort by Last Name -----
     const handleSortLastName = () => {
+        fetchData(1, perPage, search, "lastName");
+        setSortLastName("lastName");
+    };
+
+    // ----- Limit items per page -----
+    const changeItemsPerPage = (event) => {
+        setPerPage(event.target.value);
+    };
+
+    const handleLimitPage = () => {
+        fetchData(1, perPage, search, sortLastName);
+    };
+
+    // ----- Delete multiple users -----
+    const handleCheckAll = (event) => {
+        if (event.target.checked) {
+            const allIds = userList.map((item) => item.id);
+            setSelectedItemIds(allIds);
+        } else {
+            setSelectedItemIds([]);
+        }
+    };
+
+    const handleCheck = (id) => {
+        setSelectedItemIds((prev) => {
+            const isCheck = selectedItemIds.includes(id);
+            if (isCheck) {
+                return selectedItemIds.filter((item) => item !== id);
+            } else {
+                return [...prev, id];
+            }
+        });
+    };
+
+    console.log(selectedItemIds);
+    const handleDeleteMultiple = () => {
+        const deleteMultiple = selectedItemIds.map((id) => deleteUser(id));
+        Promise.all(deleteMultiple);
         dispatch(
             getAllUsersThunk({
                 _page: 1,
-                department: search,
-                _sort: "lastName",
             })
         );
-        setSortLastName("lastName");
+        setSelectedItemIds([]);
+        setPageCount(1);
     };
 
     return (
@@ -133,13 +185,22 @@ const UserList = () => {
                 </div>
 
                 {admin && (
-                    <button
-                        onClick={() => navigate("/user/create")}
-                        className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                        type="button"
-                    >
-                        Create
-                    </button>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={handleDeleteMultiple}
+                            className="block text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+                            type="button"
+                        >
+                            Delete
+                        </button>
+                        <button
+                            onClick={() => navigate("/user/create")}
+                            className="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 my-4 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            type="button"
+                        >
+                            Create
+                        </button>
+                    </div>
                 )}
             </div>
 
@@ -147,6 +208,17 @@ const UserList = () => {
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th>
+                                <input
+                                    type="checkbox"
+                                    className="w-4 h-4 mx-6"
+                                    checked={
+                                        selectedItemIds.length ===
+                                        userList.length
+                                    }
+                                    onChange={handleCheckAll}
+                                />
+                            </th>
                             <th scope="col" className="px-6 py-3">
                                 First Name
                             </th>
@@ -196,6 +268,19 @@ const UserList = () => {
                                     key={item.id}
                                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                                 >
+                                    <th>
+                                        <input
+                                            type="checkbox"
+                                            className="w-4 h-4 mx-6"
+                                            // value={}
+                                            checked={selectedItemIds.includes(
+                                                item.id
+                                            )}
+                                            onChange={() =>
+                                                handleCheck(item.id)
+                                            }
+                                        />
+                                    </th>
                                     <th
                                         scope="row"
                                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -241,7 +326,32 @@ const UserList = () => {
                         })}
                     </tbody>
                 </table>
-                <div className="flex justify-center my-3">
+                <div className="flex justify-center gap-4 my-3">
+                    <div className="relative">
+                        <select
+                            className="block appearance-none w-full h-8  border border-gray-200 text-gray-700  px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                            defaultValue="10"
+                            onChange={changeItemsPerPage}
+                            onKeyDown={handleLimitPage}
+                        >
+                            {/* <option value="" disabled selected hidden>
+                                Select Department
+                            </option> */}
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg
+                                className="fill-current h-4 w-4"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                            >
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                            </svg>
+                        </div>
+                    </div>
                     <ReactPaginate
                         previousLabel={"< previous"}
                         nextLabel={"next >"}
