@@ -1,7 +1,7 @@
 import logo from "assets/images/logo.png";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginAPI } from "./services/UserService";
+import { getAllUsers } from "./services/UserService";
 import { toast } from "react-toastify";
 
 const Login = () => {
@@ -35,7 +35,7 @@ const Login = () => {
         if (userLogin.password.trim().length === 0) {
             msgError.password = "Password is required";
         } else {
-            let users = await loginAPI();
+            let users = await getAllUsers();
             console.log("check >>>", users.data);
 
             const result = users.data.find(

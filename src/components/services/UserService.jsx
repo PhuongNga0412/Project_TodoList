@@ -24,8 +24,8 @@ const deleteUser = (id) => {
     return instance.delete("/users/" + id);
 };
 
-const loginAPI = () => {
+const getAllUsers = () => {
     return instance.get("/users");
 };
 
-export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser, loginAPI };
+export { fetchAllUser, postCreateUser, putUpdateUser, deleteUser, getAllUsers };

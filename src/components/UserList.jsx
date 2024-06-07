@@ -2,17 +2,20 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import ConfirmDelete from "./ConfirmDelete";
+import DelAll from "./DelAll";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsersThunk, getUserState } from "reducers/userReducer";
-import { deleteUser } from "./services/UserService";
+import { deleteUser, getAllUsers } from "./services/UserService";
 
 const UserList = () => {
     const navigate = useNavigate();
     const [pageCount, setPageCount] = useState(1);
     const [showForm, setShowForm] = useState(false);
+    const [showFormDelAll, setShowFormDelAll] = useState(false);
     const [search, setSearch] = useState("");
-    const [sortLastName, setSortLastName] = useState("");
+    const [sortLastName, setSortLastName] = useState(null);
     const [selectedItemIds, setSelectedItemIds] = useState([]);
+    const [isCheckAll, setIsCheckAll] = useState(false);
     const [perPage, setPerPage] = useState(10);
 
     const userToken = JSON.parse(localStorage.getItem("user"));
@@ -74,6 +77,7 @@ const UserList = () => {
 
     const closeModal = () => {
         setShowForm(false);
+        setShowFormDelAll(false);
         setUserIdToDelete(null);
     };
 
@@ -81,10 +85,10 @@ const UserList = () => {
         await deleteUser(userIdToDelete);
         dispatch(
             getAllUsersThunk({
-                _page: 1,
+                _page: pageCount,
             })
         );
-        setPageCount(1);
+        // setPageCount(1);
         closeModal();
     };
 
@@ -96,12 +100,12 @@ const UserList = () => {
     const handleFilterByDepartment = () => {
         fetchData(1, perPage, search, sortLastName);
     };
-    console.log(handleFilterByDepartment);
 
     // ----- Sort by Last Name -----
     const handleSortLastName = () => {
-        fetchData(1, perPage, search, "lastName");
-        setSortLastName("lastName");
+        const newSortOrder = sortLastName === "lastName" ? null : "lastName";
+        fetchData(1, perPage, search, newSortOrder);
+        setSortLastName(newSortOrder);
     };
 
     // ----- Limit items per page -----
@@ -114,11 +118,12 @@ const UserList = () => {
     };
 
     // ----- Delete multiple users -----
-    const handleCheckAll = (event) => {
-        if (event.target.checked) {
-            const allIds = userList.map((item) => item.id);
-            setSelectedItemIds(allIds);
-        } else {
+    const handleCheckAll = async () => {
+        let users = await getAllUsers();
+        let allUsers = users.data;
+        setIsCheckAll(!isCheckAll);
+        setSelectedItemIds(allUsers.map((item) => item.id));
+        if (isCheckAll) {
             setSelectedItemIds([]);
         }
     };
@@ -134,17 +139,24 @@ const UserList = () => {
         });
     };
 
-    console.log(selectedItemIds);
     const handleDeleteMultiple = () => {
+        console.log(selectedItemIds);
+        if (selectedItemIds.length !== 0) {
+            setShowFormDelAll(true);
+        }
+    };
+    const ConfirmDeleteAll = async () => {
         const deleteMultiple = selectedItemIds.map((id) => deleteUser(id));
-        Promise.all(deleteMultiple);
-        dispatch(
-            getAllUsersThunk({
-                _page: 1,
-            })
-        );
+        Promise.all(deleteMultiple).then(() => {
+            dispatch(
+                getAllUsersThunk({
+                    _page: pageCount,
+                })
+            );
+        });
+
         setSelectedItemIds([]);
-        setPageCount(1);
+        closeModal();
     };
 
     return (
@@ -212,11 +224,8 @@ const UserList = () => {
                                 <input
                                     type="checkbox"
                                     className="w-4 h-4 mx-6"
-                                    checked={
-                                        selectedItemIds.length ===
-                                        userList.length
-                                    }
-                                    onChange={handleCheckAll}
+                                    checked={isCheckAll}
+                                    onClick={handleCheckAll}
                                 />
                             </th>
                             <th scope="col" className="px-6 py-3">
@@ -374,6 +383,13 @@ const UserList = () => {
                 <ConfirmDelete
                     onClose={closeModal}
                     confirmDelete={() => confirmDelete(userIdToDelete)}
+                />
+            )}
+            {showFormDelAll && (
+                <DelAll
+                    selectedItemIds={selectedItemIds.length}
+                    onClose={closeModal}
+                    ConfirmDeleteAll={() => ConfirmDeleteAll(selectedItemIds)}
                 />
             )}
         </div>
