@@ -133,6 +133,7 @@ const FormUser = ({ isUpdate, userData }) => {
     const convertBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
+            console.log(fileReader);
             fileReader.readAsDataURL(file);
             fileReader.onload = () => {
                 resolve(fileReader.result);

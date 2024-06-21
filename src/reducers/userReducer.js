@@ -12,6 +12,7 @@ export const getAllUsersThunk = createAsyncThunk(
     async (params) => {
         try {
             const { data } = await fetchAllUser(params);
+            console.log("data: ", data);
             return data;
         } catch (error) {
             console.error("Error fetching users:", error);

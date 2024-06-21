@@ -225,7 +225,7 @@ const UserList = () => {
                                     type="checkbox"
                                     className="w-4 h-4 mx-6"
                                     checked={isCheckAll}
-                                    onClick={handleCheckAll}
+                                    onChange={handleCheckAll}
                                 />
                             </th>
                             <th scope="col" className="px-6 py-3">
